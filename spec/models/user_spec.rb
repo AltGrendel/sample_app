@@ -25,6 +25,7 @@ describe User do
  it { should respond_to(:password_digest) }
  it { should respond_to(:password) }
  it { should respond_to(:password_confirmation) }
+ it { should respond_to(:remember_token) }
  it { should respond_to(:authenticate) }
 
  it { should be_valid }
@@ -92,16 +93,17 @@ describe User do
   before { @user.save }
   let(:found_user) { User.find_by_email(@user.email) }
 
-  describe "with valid password" do
-    it { should == found_user.authenticate(@user.password) }
-  end
+   describe "with valid password" do
+     it { should == found_user.authenticate(@user.password) }
+   end
 
-  describe "with invalid password" do
-    let(:user_for_invalid_password) { found_user.authenticate("invalid") }
+   describe "with invalid password" do
+     let(:user_for_invalid_password) { found_user.authenticate("invalid") }
 
-    it { should_not == user_for_invalid_password }
-    specify { user_for_invalid_password.should be_false }
-  end
+     it { should_not == user_for_invalid_password }
+     specify { user_for_invalid_password.should be_false }
+   end
+  
  end
 
  describe "with a password that's too short" do
@@ -117,6 +119,11 @@ describe User do
      @user.save
      @user.reload.email.should == mixed_case_email.downcase
    end
+ end
+
+ describe "remember token" do
+     before { @user.save }
+     its(:remember_token) { should_not be_blank }
  end
 
 end
